@@ -1,7 +1,10 @@
 package org.secfirst.umbrella.whitelabel.data.database.content
 
+import com.raizlabs.android.dbflow.config.FlowManager
 import com.raizlabs.android.dbflow.kotlinextensions.modelAdapter
 import kotlinx.coroutines.experimental.withContext
+import org.apache.commons.io.FileUtils
+import org.secfirst.umbrella.whitelabel.data.database.AppDatabase
 import org.secfirst.umbrella.whitelabel.data.database.BaseDao
 import org.secfirst.umbrella.whitelabel.data.database.checklist.Checklist
 import org.secfirst.umbrella.whitelabel.data.database.checklist.Content
@@ -78,6 +81,14 @@ interface ContentDao : BaseDao {
     suspend fun insertDefaultRSS(rssList: List<RSS>) {
         withContext(ioContext) {
             modelAdapter<RSS>().saveAll(rssList)
+        }
+    }
+
+    suspend fun resetContent() {
+        withContext(ioContext) {
+            val cacheDir = FlowManager.getContext().cacheDir
+            FileUtils.deleteQuietly(cacheDir)
+            FlowManager.getDatabase(AppDatabase.NAME).reset()
         }
     }
 }
